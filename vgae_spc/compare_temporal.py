@@ -22,9 +22,9 @@ from scipy import stats
 
 from .data import ROOT
 
-OUT = ROOT / "resultados_batadal" / "temporal"
-BEST = ROOT / "resultados_batadal" / "optuna_colab" / "best_params.json"
-CKPT = ROOT / "resultados_batadal" / "optuna_colab_final" / "vgae.pt"
+OUT = ROOT / "resultados" / "temporal"
+BEST = ROOT / "resultados" / "optuna" / "best_params.json"
+CKPT = ROOT / "resultados" / "optuna_final" / "vgae.pt"
 CONFIGS = {"VGAE base": "none", "VGAE + conv. temporal": "tcn"}
 METRICS = ("S", "S_TTD", "S_CM", "TPR", "TNR", "Precision", "F1", "detectados")
 
@@ -59,7 +59,11 @@ def run(n_seeds, worker, n_workers, threads=0, epochs=300, patience=25):
 
 
 def report():
-    df = pd.concat([pd.read_csv(p) for p in sorted(OUT.glob("part_*.csv"))]).sort_values(["config", "seed"])
+    parts = sorted(OUT.glob("part_*.csv"))
+    if parts:
+        df = pd.concat([pd.read_csv(p) for p in parts]).sort_values(["config", "seed"])
+    else:   # sin corridas nuevas: se rehace el reporte desde los resultados guardados
+        df = pd.read_csv(OUT / "seeds_temporal.csv")
     df.to_csv(OUT / "seeds_temporal.csv", index=False)
     cols = [f"{ds}_{k}" for ds in ("dataset04", "test") for k in ("S", "TPR", "TNR", "F1")] + ["val_loss", "epochs"]
     summ = df.groupby("config")[cols].agg(["mean", "std"]).round(4)

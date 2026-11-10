@@ -1,8 +1,8 @@
 """Optimización de hiperparámetros del VGAE + SPC con Optuna, con evidencia de que
 la configuración elegida no es fruto del azar.
 
-Uso:  python -m vgae_spc.tune [--tpe 60] [--random 30] [--seeds 5] [--stage all|search|seeds|report]
-      [--out results/optuna] [--storage ruta.db|ruta.log] [--parallel]
+Uso:  python -m vgae_spc.tune [--tpe 100] [--random 50] [--seeds 10] [--stage all|search|seeds|report]
+      [--out resultados/optuna] [--storage ruta.db|ruta.log] [--parallel]
       [--seed-worker i --seed-workers n]   (etapa seeds repartida en n procesos)
 
   --storage *.log usa JournalStorage (archivo con bloqueo, seguro para varios procesos);
@@ -18,12 +18,12 @@ Protocolo (el test NO se usa durante la búsqueda):
   - Robustez: la mejor configuración de TPE, la mejor aleatoria y la configuración
     por defecto se reentrenan con varias semillas; recién aquí se evalúa el test.
 
-Evidencia que se genera en results/optuna/:
+Evidencia que se genera en resultados/optuna/:
   1. history.png         curva del mejor valor acumulado TPE vs aleatorio
   2. tpe_vs_random.png   distribución de S por trial + test de Mann-Whitney
   3. importances.png     importancia de cada hiperparámetro (fANOVA)
   4. slices.png          S vs valor de cada hiperparámetro importante
-  5. seeds.png           S en dataset04 y test con 5 semillas por configuración
+  5. seeds.png           S en dataset04 y test con 10 semillas por configuración
   6. REPORTE.md          resumen con todos los números
 """
 import argparse
@@ -44,7 +44,7 @@ from .core import (BATCH_SIZES, DEFAULT_HP, DEVICE, EPOCHS, PATIENCE, build_mode
 from .data import ROOT, load_all
 from .spc import SPCMonitor, batadal_score
 
-OUT = ROOT / "results" / "optuna"
+OUT = ROOT / "resultados" / "optuna"
 OUT.mkdir(parents=True, exist_ok=True)
 STORAGE = f"sqlite:///{OUT / 'optuna.db'}"
 PARALLEL = False
@@ -327,19 +327,19 @@ def report(tpe, rnd, seeds):
             f"- Wilcoxon pareado por semilla, S test, TPE > mejor aleatoria: p = {w_rnd:.3g}",
             f"- Con {len(st)} semillas, el menor p posible en un Wilcoxon unilateral es {1 / 2 ** len(st):.3g}.",
         ]
-    lines += ["", "Gráfico: `seeds.png`. Datos: `trials_tpe.csv`, `trials_random.csv`, `seeds.csv`, `optuna.db`."]
+    lines += ["", "Gráfico: `seeds.png`. Datos: `trials_tpe.csv`, `trials_random.csv`, `seeds.csv`, `journal.log`."]
     (OUT / "REPORTE.md").write_text("\n".join(lines))
     print("\n".join(lines))
 
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--tpe", type=int, default=60)
-    ap.add_argument("--random", type=int, default=30)
-    ap.add_argument("--seeds", type=int, default=5)
+    ap.add_argument("--tpe", type=int, default=100)
+    ap.add_argument("--random", type=int, default=50)
+    ap.add_argument("--seeds", type=int, default=10)
     ap.add_argument("--stage", default="all", choices=["all", "search", "seeds", "report"])
-    ap.add_argument("--out", default="results/optuna")
-    ap.add_argument("--storage", default=None, help="ruta .db (SQLite) o .log (Journal)")
+    ap.add_argument("--out", default="resultados/optuna")
+    ap.add_argument("--storage", default=None, help="ruta .db (SQLite) o .log (Journal); por defecto <out>/journal.log")
     ap.add_argument("--parallel", action="store_true")
     ap.add_argument("--seed-worker", type=int, default=0, help="índice de este worker en la etapa seeds")
     ap.add_argument("--seed-workers", type=int, default=1, help="workers totales en la etapa seeds")
@@ -347,7 +347,7 @@ def main():
     global OUT, STORAGE, PARALLEL
     OUT = ROOT / a.out
     OUT.mkdir(parents=True, exist_ok=True)
-    STORAGE = make_storage(a.storage or OUT / "optuna.db")
+    STORAGE = make_storage(a.storage or OUT / "journal.log")
     PARALLEL = a.parallel
     print(f"device: {DEVICE}  salida: {OUT}", flush=True)
     if a.stage in ("all", "search"):

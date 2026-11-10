@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 
 ROOT = Path(__file__).resolve().parent.parent
+DATA = ROOT / "datos"   # CSV de BATADAL y CTOWN.INP
 
 # Ventanas de ataque completas (inicio y fin inclusivos), transcritas de
 # Attacks_TrainingDataset4.png y Attacks_TestDataset.png.
@@ -29,7 +30,7 @@ ATTACKS_TEST = [
 
 
 def _read(name):
-    df = pd.read_csv(ROOT / name, skipinitialspace=True)
+    df = pd.read_csv(DATA / name, skipinitialspace=True)
     df.columns = df.columns.str.strip()
     df["DATETIME"] = pd.to_datetime(df["DATETIME"], format="%d/%m/%y %H")
     return df.set_index("DATETIME")
@@ -51,11 +52,11 @@ def load_all():
     """Devuelve dict con DataFrames de señales, etiquetas y la lista de columnas usadas."""
     d03 = _read("BATADAL_training_dataset03.csv")
     d04 = _read("BATADAL_training_dataset04.csv")
-    test_csv = ROOT / "BATADAL_test_dataset.csv"
+    test_csv = DATA / "BATADAL_test_dataset.csv"
     if not test_csv.exists():
         import zipfile
-        with zipfile.ZipFile(ROOT / "BATADAL_test_dataset.zip") as z:
-            z.extract("BATADAL_test_dataset.csv", ROOT)
+        with zipfile.ZipFile(DATA / "BATADAL_test_dataset.zip") as z:
+            z.extract("BATADAL_test_dataset.csv", DATA)
     dte = _read("BATADAL_test_dataset.csv")
 
     sensors = [c for c in d03.columns if c != "ATT_FLAG"]

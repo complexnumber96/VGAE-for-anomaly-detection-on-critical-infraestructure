@@ -28,11 +28,11 @@ from .spc import AGG, SPCMonitor, batadal_score
 SEED = 0
 torch.manual_seed(SEED); np.random.seed(SEED)
 
-# --optuna: usa los hiperparámetros encontrados por tune.py y guarda en results/<carpeta>_final
-# --optuna-dir results/optuna_colab: lee best_params.json de otra búsqueda (por defecto results/optuna)
+# --optuna: usa los hiperparámetros encontrados por tune.py y guarda en resultados/<carpeta>_final
+# --optuna-dir <carpeta>: lee best_params.json de otra búsqueda (por defecto resultados/optuna)
 USE_OPTUNA = "--optuna" in sys.argv
 OPTUNA_DIR = ROOT / (sys.argv[sys.argv.index("--optuna-dir") + 1] if "--optuna-dir" in sys.argv
-                     else "results/optuna")
+                     else "resultados/optuna")
 if USE_OPTUNA:
     _best = json.load(open(OPTUNA_DIR / "best_params.json"))
     HP = {k: _best[k] for k in DEFAULT_HP}
@@ -40,7 +40,7 @@ if USE_OPTUNA:
     OUT = OPTUNA_DIR.parent / f"{OPTUNA_DIR.name}_final"
 else:
     HP, SPC_OPTUNA = dict(DEFAULT_HP), None
-    OUT = ROOT / "results"
+    OUT = ROOT / "resultados" / "base"
 if "--tcn" in sys.argv:
     HP["temporal"] = "tcn"
     OUT = OUT.parent / f"{OUT.name}_tcn"

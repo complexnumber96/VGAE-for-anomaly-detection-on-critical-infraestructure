@@ -72,4 +72,4 @@ Gráfico: `importances.png`, `slices.png`.
 - Wilcoxon pareado por semilla, S test, TPE > mejor aleatoria: p = 0.000977
 - Con 10 semillas, el menor p posible en un Wilcoxon unilateral es 0.000977.
 
-Gráfico: `seeds.png`. Datos: `trials_tpe.csv`, `trials_random.csv`, `seeds.csv`, `optuna.db`.
+Gráfico: `seeds.png`. Datos: `trials_tpe.csv`, `trials_random.csv`, `seeds.csv`, `journal.log`.

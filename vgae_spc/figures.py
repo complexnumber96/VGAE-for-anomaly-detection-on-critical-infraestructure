@@ -1,7 +1,7 @@
 """Figuras descriptivas del modelo y de la búsqueda con Optuna.
 
-Uso:  python -m vgae_spc.figures [--optuna-dir results/optuna]   (se puede correr mientras el estudio avanza)
-Salida: results/figuras/
+Uso:  python -m vgae_spc.figures [--optuna-dir resultados/optuna]   (se puede correr mientras el estudio avanza)
+Salida: resultados/figuras_optuna/
   grafo_sensores.png      el grafo del VGAE sobre la red C-Town y como grafo abstracto
   arquitectura_vgae.png   diagrama del modelo con los hiperparámetros elegidos por Optuna
   optuna_progreso.png     S en dataset04 por trial (TPE y aleatoria) frente a la configuración por defecto
@@ -25,13 +25,13 @@ from matplotlib.colors import LinearSegmentedColormap
 from .core import DEFAULT_HP, DEVICE, build_model, prepare, score
 from .model import normalize_adj
 from .spc import NodeScores
-from .data import ROOT, load_all
+from .data import DATA, ROOT, load_all
 from .graph import build_graph, parse_inp, sensor_location
 
 import sys
 
 OPTUNA_DIR = ROOT / (sys.argv[sys.argv.index("--optuna-dir") + 1] if "--optuna-dir" in sys.argv
-                     else "results/optuna")
+                     else "resultados/optuna")
 FINAL_DIR = OPTUNA_DIR.parent / f"{OPTUNA_DIR.name}_final"
 OUT = OPTUNA_DIR.parent / f"figuras_{OPTUNA_DIR.name}"
 OUT.mkdir(parents=True, exist_ok=True)
@@ -47,9 +47,9 @@ def optuna_storage():
 
 
 def default_reference():
-    """S en dataset04 de la carta EWMA del modelo por defecto (results/summary.csv), si existe."""
+    """S en dataset04 de la carta EWMA del modelo por defecto (resultados/base/summary.csv), si existe."""
     import pandas as pd
-    f = ROOT / "results" / "summary.csv"
+    f = ROOT / "resultados" / "base" / "summary.csv"
     if f.exists():
         df = pd.read_csv(f)
         m = df[(df.carta == "ewma") & (df.dataset == "dataset04")]
@@ -76,7 +76,7 @@ EDGE_STYLE = {"control": ("-", 1.6, INK2, "Control tanque → actuador (PLC)"),
 
 def coordinates():
     coords, cur = {}, None
-    for line in open(ROOT / "CTOWN.INP"):
+    for line in open(DATA / "CTOWN.INP"):
         line = line.split(";")[0].strip()
         if line.startswith("["):
             cur = line

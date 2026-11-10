@@ -5,7 +5,7 @@ from collections import defaultdict
 
 import numpy as np
 
-from .data import ROOT
+from .data import DATA
 
 # Lógica de control del [CONTROLS] del .INP: tanque -> actuadores que gobierna
 CONTROLS = {
@@ -14,7 +14,7 @@ CONTROLS = {
 }
 
 
-def parse_inp(path=ROOT / "CTOWN.INP"):
+def parse_inp(path=DATA / "CTOWN.INP"):
     sections, cur = defaultdict(list), None
     for line in open(path):
         line = line.split(";")[0].strip()
