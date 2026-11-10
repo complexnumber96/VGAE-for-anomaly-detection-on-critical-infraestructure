@@ -1,0 +1,5 @@
+,dataset04_S,dataset04_S,dataset04_TPR,dataset04_TPR,dataset04_TNR,dataset04_TNR,dataset04_F1,dataset04_F1,test_S,test_S,test_TPR,test_TPR,test_TNR,test_TNR,test_F1,test_F1,val_loss,val_loss,epochs,epochs
+,mean,std,mean,std,mean,std,mean,std,mean,std,mean,std,mean,std,mean,std,mean,std,mean,std
+config,,,,,,,,,,,,,,,,,,,,
+VGAE + conv. temporal,0.8663,0.0167,0.6535,0.0225,0.9685,0.0049,0.6917,0.0095,0.7576,0.0247,0.4649,0.0511,0.9731,0.0058,0.5885,0.0395,0.1488,0.0046,194.2,72.6358
+VGAE base,0.8555,0.0175,0.6339,0.0198,0.9694,0.0033,0.6805,0.0097,0.7414,0.0159,0.4201,0.026,0.9765,0.0035,0.5534,0.0217,0.161,0.001,300.0,0.0

@@ -1,0 +1,33 @@
+# Lista blanca: se ignora todo y se suben sólo código, textos fuente y resultados finales.
+/*
+!/.gitignore
+!/README.md
+!/requirements.txt
+
+# Código
+!/vgae_spc/
+/vgae_spc/__pycache__/
+!/colab/
+/colab/*.zip
+
+# Paper e informe (fuente + PDF; sin auxiliares de LaTeX)
+!/paper/
+!/informe/
+*.aux
+*.log
+*.out
+*.toc
+
+# Resultados finales que usan el paper y el informe
+!/resultados_batadal/
+/resultados_batadal/*
+!/resultados_batadal/optuna_colab/
+!/resultados_batadal/optuna_colab_final/
+!/resultados_batadal/figuras_optuna_colab/
+!/resultados_batadal/temporal/
+# journal.log es el estudio de Optuna (no un log de consola)
+!/resultados_batadal/optuna_colab/journal.log
+/resultados_batadal/optuna_colab/worker_*.txt
+/resultados_batadal/optuna_colab/seeds_*.txt
+/resultados_batadal/optuna_colab/seeds_part_*.csv
+/resultados_batadal/temporal/part_*.csv
